@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Måltidsplanlægger</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+    }
+    .recipe-list, .shopping-list {
+      margin: 20px 0;
+    }
+    .recipe-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 5px 0;
+    }
+    .shopping-list ul {
+      list-style-type: none;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Måltidsplanlægger</h1>
+  </header>
+  <div class="container">
+    <h2>Opskrifter</h2>
+    <div class="recipe-list" id="recipe-list">
+      <!-- Opskrifter vil blive tilføjet her dynamisk -->
+    </div>
+
+    <h2>Indkøbsliste</h2>
+    <div class="shopping-list" id="shopping-list">
+      <ul id="shopping-items">
+        <!-- Indkøbsliste vil blive tilføjet her dynamisk -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Eksempeldata til opskrifter
+    const recipes = [
+      {
+        name: "Bacon-cheeseburger",
+        ingredients: ["Kartofler", "Agurk", "Briocheboller", "Hakket oksekød", "Bacon skiver"]
+      },
+      {
+        name: "Pandestegt kyllingebryst",
+        ingredients: ["Peberfrugt", "Purløg", "Kyllingebryst", "Spinat"]
+      }
+    ];
+
+    const shoppingList = {};
+
+    // Tilføj opskrifter til listen
+    function displayRecipes() {
+      const recipeList = document.getElementById('recipe-list');
+      recipes.forEach((recipe, index) => {
+        const recipeItem = document.createElement('div');
+        recipeItem.className = 'recipe-item';
+        recipeItem.innerHTML = `
+          <h3>${recipe.name}</h3>
+          <p>Ingredienser: ${recipe.ingredients.join(', ')}</p>
+          <button onclick="addToShoppingList(${index})">Tilføj til indkøbsliste</button>
+        `;
+        recipeList.appendChild(recipeItem);
+      });
+    }
+
+    // Tilføj ingredienser til indkøbslisten
+    function addToShoppingList(index) {
+      const ingredients = recipes[index].ingredients;
+      ingredients.forEach(ingredient => {
+        shoppingList[ingredient] = (shoppingList[ingredient] || 0) + 1;
+      });
+      updateShoppingList();
+    }
+
+    // Opdater indkøbslisten
+    function updateShoppingList() {
+      const shoppingItems = document.getElementById('shopping-items');
+      shoppingItems.innerHTML = '';
+      for (const item in shoppingList) {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${item} (${shoppingList[item]})`;
+        shoppingItems.appendChild(listItem);
+      }
+    }
+
+    displayRecipes();
+  </script>
+</body>
+</html>
