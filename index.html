@@ -31,6 +31,10 @@
       list-style-type: none;
       padding: 0;
     }
+    input, button {
+      margin: 5px;
+      padding: 10px;
+    }
   </style>
 </head>
 <body>
@@ -38,6 +42,11 @@
     <h1>Måltidsplanlægger</h1>
   </header>
   <div class="container">
+    <h2>Tilføj en ny opskrift</h2>
+    <input type="text" id="recipe-name" placeholder="Opskrift navn">
+    <input type="text" id="recipe-ingredients" placeholder="Ingredienser (kommasepareret)">
+    <button onclick="addRecipe()">Tilføj opskrift</button>
+
     <h2>Opskrifter</h2>
     <div class="recipe-list" id="recipe-list">
       <!-- Opskrifter vil blive tilføjet her dynamisk -->
@@ -48,12 +57,12 @@
       <ul id="shopping-items">
         <!-- Indkøbsliste vil blive tilføjet her dynamisk -->
       </ul>
+      <button onclick="exportShoppingList()">Eksporter til PDF</button>
     </div>
   </div>
 
   <script>
-    // Eksempeldata til opskrifter
-    const recipes = [
+    let recipes = JSON.parse(localStorage.getItem('recipes')) || [
       {
         name: "Bacon-cheeseburger",
         ingredients: ["Kartofler", "Agurk", "Briocheboller", "Hakket oksekød", "Bacon skiver"]
@@ -66,9 +75,13 @@
 
     const shoppingList = {};
 
-    // Tilføj opskrifter til listen
+    function saveRecipes() {
+      localStorage.setItem('recipes', JSON.stringify(recipes));
+    }
+
     function displayRecipes() {
       const recipeList = document.getElementById('recipe-list');
+      recipeList.innerHTML = '';
       recipes.forEach((recipe, index) => {
         const recipeItem = document.createElement('div');
         recipeItem.className = 'recipe-item';
@@ -81,7 +94,16 @@
       });
     }
 
-    // Tilføj ingredienser til indkøbslisten
+    function addRecipe() {
+      const name = document.getElementById('recipe-name').value;
+      const ingredients = document.getElementById('recipe-ingredients').value.split(',').map(i => i.trim());
+      if (name && ingredients.length > 0) {
+        recipes.push({ name, ingredients });
+        saveRecipes();
+        displayRecipes();
+      }
+    }
+
     function addToShoppingList(index) {
       const ingredients = recipes[index].ingredients;
       ingredients.forEach(ingredient => {
@@ -90,7 +112,6 @@
       updateShoppingList();
     }
 
-    // Opdater indkøbslisten
     function updateShoppingList() {
       const shoppingItems = document.getElementById('shopping-items');
       shoppingItems.innerHTML = '';
@@ -99,6 +120,15 @@
         listItem.textContent = `${item} (${shoppingList[item]})`;
         shoppingItems.appendChild(listItem);
       }
+    }
+
+    function exportShoppingList() {
+      const items = Object.entries(shoppingList).map(([item, count]) => `${item}: ${count}`).join('\n');
+      const blob = new Blob([items], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'indkøbsliste.txt';
+      link.click();
     }
 
     displayRecipes();
