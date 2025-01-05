@@ -22,10 +22,19 @@
     .recipe-list, .shopping-list {
       margin: 20px 0;
     }
+    .recipe-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
     .recipe-item {
       border: 1px solid #ddd;
       padding: 10px;
-      margin: 5px 0;
+      text-align: center;
+    }
+    .recipe-item img {
+      width: 100%;
+      height: auto;
     }
     .shopping-list ul {
       list-style-type: none;
@@ -45,6 +54,7 @@
     <h2>Tilføj en ny opskrift</h2>
     <input type="text" id="recipe-name" placeholder="Opskrift navn">
     <input type="text" id="recipe-ingredients" placeholder="Ingredienser (kommasepareret)">
+    <input type="text" id="recipe-image" placeholder="Billede URL">
     <button onclick="addRecipe()">Tilføj opskrift</button>
 
     <h2>Opskrifter</h2>
@@ -62,14 +72,26 @@
   </div>
 
   <script>
-    let recipes = JSON.parse(localStorage.getItem('recipes')) || [
+    let recipes = [
       {
-        name: "Bacon-cheeseburger",
-        ingredients: ["Kartofler", "Agurk", "Briocheboller", "Hakket oksekød", "Bacon skiver"]
+        name: "Saftig bacon-cheeseburger",
+        ingredients: ["Kartofler", "Agurk", "Briocheboller", "Hakket oksekød", "Bacon skiver"],
+        image: "https://via.placeholder.com/150"
       },
       {
         name: "Pandestegt kyllingebryst",
-        ingredients: ["Peberfrugt", "Purløg", "Kyllingebryst", "Spinat"]
+        ingredients: ["Peberfrugt", "Purløg", "Kyllingebryst", "Spinat"],
+        image: "https://via.placeholder.com/150"
+      },
+      {
+        name: "Asiatiske svine- og kålwraps",
+        ingredients: ["Gulerod", "Små tortillas", "Pak choi", "Lime", "Hakket svinekød"],
+        image: "https://via.placeholder.com/150"
+      },
+      {
+        name: "Hurtige asiatiske vegetartacos",
+        ingredients: ["Chiliflager", "Hvidløgsfløde", "Asiatisk woksauce", "Srirachamayonnaise", "Plantefars", "Pak choi"],
+        image: "https://via.placeholder.com/150"
       }
     ];
 
@@ -86,6 +108,7 @@
         const recipeItem = document.createElement('div');
         recipeItem.className = 'recipe-item';
         recipeItem.innerHTML = `
+          <img src="${recipe.image}" alt="${recipe.name}">
           <h3>${recipe.name}</h3>
           <p>Ingredienser: ${recipe.ingredients.join(', ')}</p>
           <button onclick="addToShoppingList(${index})">Tilføj til indkøbsliste</button>
@@ -97,8 +120,9 @@
     function addRecipe() {
       const name = document.getElementById('recipe-name').value;
       const ingredients = document.getElementById('recipe-ingredients').value.split(',').map(i => i.trim());
+      const image = document.getElementById('recipe-image').value || "https://via.placeholder.com/150";
       if (name && ingredients.length > 0) {
-        recipes.push({ name, ingredients });
+        recipes.push({ name, ingredients, image });
         saveRecipes();
         displayRecipes();
       }
