@@ -40,12 +40,20 @@
       list-style-type: none;
       padding: 0;
     }
+    .shopping-list img {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
     input, button {
       margin: 5px;
       padding: 10px;
     }
     .filters {
       margin-bottom: 20px;
+    }
+    .calendar {
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -63,6 +71,13 @@
         <option value="Vegetarisk">Vegetarisk</option>
         <option value="Hurtige måltider">Hurtige måltider</option>
       </select>
+    </div>
+
+    <h2>Kalender</h2>
+    <div class="calendar">
+      <input type="date" id="meal-date">
+      <button onclick="addToCalendar()">Tilføj til Kalender</button>
+      <ul id="calendar-list"></ul>
     </div>
 
     <h2>Opskrifter</h2>
@@ -84,30 +99,35 @@
       {
         name: "Saftig bacon-cheeseburger",
         ingredients: ["Kartofler", "Agurk", "Briocheboller", "Hakket oksekød", "Bacon skiver"],
-        image: "https://github.com/user-attachments/assets/32210613-55fd-4af0-84df-c61391915cc8",
-        category: "Kød"
+        image: "https://via.placeholder.com/150",
+        category: "Kød",
+        favorite: false
       },
       {
         name: "Pandestegt kyllingebryst",
         ingredients: ["Peberfrugt", "Purløg", "Kyllingebryst", "Spinat"],
-        image: "https://i.imgur.com/4UzTPuB.jpg",
-        category: "Kød"
+        image: "https://via.placeholder.com/150",
+        category: "Kød",
+        favorite: false
       },
       {
         name: "Asiatiske svine- og kålwraps",
         ingredients: ["Gulerod", "Små tortillas", "Pak choi", "Lime", "Hakket svinekød"],
         image: "https://via.placeholder.com/150",
-        category: "Kød"
+        category: "Kød",
+        favorite: false
       },
       {
         name: "Hurtige asiatiske vegetartacos",
         ingredients: ["Chiliflager", "Hvidløgsfløde", "Asiatisk woksauce", "Srirachamayonnaise", "Plantefars", "Pak choi"],
         image: "https://via.placeholder.com/150",
-        category: "Vegetarisk"
+        category: "Vegetarisk",
+        favorite: false
       }
     ];
 
     const shoppingList = {};
+    const calendar = [];
 
     function displayRecipes(filteredRecipes = recipes) {
       const recipeList = document.getElementById('recipe-list');
@@ -120,19 +140,10 @@
           <h3>${recipe.name}</h3>
           <p>Ingredienser: ${recipe.ingredients.join(', ')}</p>
           <button onclick="addToShoppingList(${index})">Tilføj til indkøbsliste</button>
+          <button onclick="toggleFavorite(${index})">${recipe.favorite ? '★' : '☆'}</button>
         `;
         recipeList.appendChild(recipeItem);
       });
-    }
-
-    function filterRecipes() {
-      const search = document.getElementById('search').value.toLowerCase();
-      const category = document.getElementById('category-filter').value;
-      const filteredRecipes = recipes.filter(recipe =>
-        recipe.name.toLowerCase().includes(search) &&
-        (category === '' || recipe.category === category)
-      );
-      displayRecipes(filteredRecipes);
     }
 
     function addToShoppingList(index) {
@@ -148,18 +159,25 @@
       shoppingItems.innerHTML = '';
       for (const item in shoppingList) {
         const listItem = document.createElement('li');
-        listItem.textContent = `${item} (${shoppingList[item]})`;
+        listItem.innerHTML = `<img src="https://via.placeholder.com/30" alt="${item}">${item} (${shoppingList[item]})`;
         shoppingItems.appendChild(listItem);
       }
     }
 
-    function exportShoppingList() {
-      const items = Object.entries(shoppingList).map(([item, count]) => `${item}: ${count}`).join('\n');
-      const blob = new Blob([items], { type: 'text/plain' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'indkøbsliste.txt';
-      link.click();
+    function toggleFavorite(index) {
+      recipes[index].favorite = !recipes[index].favorite;
+      displayRecipes();
+    }
+
+    function addToCalendar() {
+      const date = document.getElementById('meal-date').value;
+      if (date) {
+        calendar.push(date);
+        const calendarList = document.getElementById('calendar-list');
+        const listItem = document.createElement('li');
+        listItem.textContent = date;
+        calendarList.appendChild(listItem);
+      }
     }
 
     displayRecipes();
