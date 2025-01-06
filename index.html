@@ -24,7 +24,7 @@
     }
     .recipe-list {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
     }
     .recipe-item {
@@ -44,6 +44,9 @@
       margin: 5px;
       padding: 10px;
     }
+    .filters {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -51,11 +54,16 @@
     <h1>Måltidsplanlægger</h1>
   </header>
   <div class="container">
-    <h2>Tilføj en ny opskrift</h2>
-    <input type="text" id="recipe-name" placeholder="Opskrift navn">
-    <input type="text" id="recipe-ingredients" placeholder="Ingredienser (kommasepareret)">
-    <input type="text" id="recipe-image" placeholder="Billede URL">
-    <button onclick="addRecipe()">Tilføj opskrift</button>
+    <h2>Filtrering og Kategorier</h2>
+    <div class="filters">
+      <input type="text" id="search" placeholder="Søg efter opskrift" onkeyup="filterRecipes()">
+      <select id="category-filter" onchange="filterRecipes()">
+        <option value="">Alle kategorier</option>
+        <option value="Kød">Kød</option>
+        <option value="Vegetarisk">Vegetarisk</option>
+        <option value="Hurtige måltider">Hurtige måltider</option>
+      </select>
+    </div>
 
     <h2>Opskrifter</h2>
     <div class="recipe-list" id="recipe-list">
@@ -76,35 +84,35 @@
       {
         name: "Saftig bacon-cheeseburger",
         ingredients: ["Kartofler", "Agurk", "Briocheboller", "Hakket oksekød", "Bacon skiver"],
-        image: "https://github.com/user-attachments/assets/32210613-55fd-4af0-84df-c61391915cc8"
+        image: "https://github.com/user-attachments/assets/32210613-55fd-4af0-84df-c61391915cc8",
+        category: "Kød"
       },
       {
         name: "Pandestegt kyllingebryst",
         ingredients: ["Peberfrugt", "Purløg", "Kyllingebryst", "Spinat"],
-        image: "https://i.imgur.com/4UzTPuB.jpg"
+        image: "https://i.imgur.com/4UzTPuB.jpg",
+        category: "Kød"
       },
       {
         name: "Asiatiske svine- og kålwraps",
         ingredients: ["Gulerod", "Små tortillas", "Pak choi", "Lime", "Hakket svinekød"],
-        image: "https://imgur.com/cPswfrf"
+        image: "https://via.placeholder.com/150",
+        category: "Kød"
       },
       {
         name: "Hurtige asiatiske vegetartacos",
         ingredients: ["Chiliflager", "Hvidløgsfløde", "Asiatisk woksauce", "Srirachamayonnaise", "Plantefars", "Pak choi"],
-        image: "https://imgur.com/ZLntUWi"
+        image: "https://via.placeholder.com/150",
+        category: "Vegetarisk"
       }
     ];
 
     const shoppingList = {};
 
-    function saveRecipes() {
-      localStorage.setItem('recipes', JSON.stringify(recipes));
-    }
-
-    function displayRecipes() {
+    function displayRecipes(filteredRecipes = recipes) {
       const recipeList = document.getElementById('recipe-list');
       recipeList.innerHTML = '';
-      recipes.forEach((recipe, index) => {
+      filteredRecipes.forEach((recipe, index) => {
         const recipeItem = document.createElement('div');
         recipeItem.className = 'recipe-item';
         recipeItem.innerHTML = `
@@ -117,15 +125,14 @@
       });
     }
 
-    function addRecipe() {
-      const name = document.getElementById('recipe-name').value;
-      const ingredients = document.getElementById('recipe-ingredients').value.split(',').map(i => i.trim());
-      const image = document.getElementById('recipe-image').value || "https://via.placeholder.com/150";
-      if (name && ingredients.length > 0) {
-        recipes.push({ name, ingredients, image });
-        saveRecipes();
-        displayRecipes();
-      }
+    function filterRecipes() {
+      const search = document.getElementById('search').value.toLowerCase();
+      const category = document.getElementById('category-filter').value;
+      const filteredRecipes = recipes.filter(recipe =>
+        recipe.name.toLowerCase().includes(search) &&
+        (category === '' || recipe.category === category)
+      );
+      displayRecipes(filteredRecipes);
     }
 
     function addToShoppingList(index) {
