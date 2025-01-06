@@ -158,6 +158,16 @@
       });
     }
 
+    function filterRecipes() {
+      const search = document.getElementById('search').value.toLowerCase();
+      const category = document.getElementById('category-filter').value;
+      const filteredRecipes = recipes.filter(recipe =>
+        recipe.name.toLowerCase().includes(search) &&
+        (category === '' || recipe.category === category)
+      );
+      displayRecipes(filteredRecipes);
+    }
+
     function addToShoppingList(index) {
       const ingredients = recipes[index].ingredients;
       ingredients.forEach(ingredient => {
