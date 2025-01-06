@@ -85,55 +85,54 @@
   </div>
 
   <script>
+    // Central ingrediensliste med billeder
+    const ingredientImages = {
+      "Kartofler": "https://via.placeholder.com/30",
+      "Agurk": "https://via.placeholder.com/30",
+      "Briocheboller": "https://via.placeholder.com/30",
+      "Hakket oksekød": "https://via.placeholder.com/30",
+      "Bacon skiver": "https://via.placeholder.com/30",
+      "Peberfrugt": "https://via.placeholder.com/30",
+      "Purløg": "https://via.placeholder.com/30",
+      "Kyllingebryst": "https://via.placeholder.com/30",
+      "Spinat": "https://via.placeholder.com/30",
+      "Gulerod": "https://via.placeholder.com/30",
+      "Små tortillas": "https://via.placeholder.com/30",
+      "Pak choi": "https://via.placeholder.com/30",
+      "Lime": "https://via.placeholder.com/30",
+      "Hakket svinekød": "https://via.placeholder.com/30",
+      "Chiliflager": "https://via.placeholder.com/30",
+      "Hvidløgsfløde": "https://via.placeholder.com/30",
+      "Asiatisk woksauce": "https://via.placeholder.com/30",
+      "Srirachamayonnaise": "https://via.placeholder.com/30",
+      "Plantefars": "https://via.placeholder.com/30"
+    };
+
     let recipes = [
       {
         name: "Saftig bacon-cheeseburger",
-        ingredients: [
-          { name: "Kartofler", image: "https://via.placeholder.com/30" },
-          { name: "Agurk", image: "https://via.placeholder.com/30" },
-          { name: "Briocheboller", image: "https://via.placeholder.com/30" },
-          { name: "Hakket oksekød", image: "https://via.placeholder.com/30" },
-          { name: "Bacon skiver", image: "https://via.placeholder.com/30" }
-        ],
+        ingredients: ["Kartofler", "Agurk", "Briocheboller", "Hakket oksekød", "Bacon skiver"],
         image: "https://via.placeholder.com/150",
         category: "Kød",
         favorite: false
       },
       {
         name: "Pandestegt kyllingebryst",
-        ingredients: [
-          { name: "Peberfrugt", image: "https://via.placeholder.com/30" },
-          { name: "Purløg", image: "https://via.placeholder.com/30" },
-          { name: "Kyllingebryst", image: "https://via.placeholder.com/30" },
-          { name: "Spinat", image: "https://via.placeholder.com/30" }
-        ],
+        ingredients: ["Peberfrugt", "Purløg", "Kyllingebryst", "Spinat"],
         image: "https://via.placeholder.com/150",
         category: "Kød",
         favorite: false
       },
       {
         name: "Asiatiske svine- og kålwraps",
-        ingredients: [
-          { name: "Gulerod", image: "https://via.placeholder.com/30" },
-          { name: "Små tortillas", image: "https://via.placeholder.com/30" },
-          { name: "Pak choi", image: "https://via.placeholder.com/30" },
-          { name: "Lime", image: "https://via.placeholder.com/30" },
-          { name: "Hakket svinekød", image: "https://via.placeholder.com/30" }
-        ],
+        ingredients: ["Gulerod", "Små tortillas", "Pak choi", "Lime", "Hakket svinekød"],
         image: "https://via.placeholder.com/150",
         category: "Kød",
         favorite: false
       },
       {
         name: "Hurtige asiatiske vegetartacos",
-        ingredients: [
-          { name: "Chiliflager", image: "https://via.placeholder.com/30" },
-          { name: "Hvidløgsfløde", image: "https://via.placeholder.com/30" },
-          { name: "Asiatisk woksauce", image: "https://via.placeholder.com/30" },
-          { name: "Srirachamayonnaise", image: "https://via.placeholder.com/30" },
-          { name: "Plantefars", image: "https://via.placeholder.com/30" },
-          { name: "Pak choi", image: "https://via.placeholder.com/30" }
-        ],
+        ingredients: ["Chiliflager", "Hvidløgsfløde", "Asiatisk woksauce", "Srirachamayonnaise", "Plantefars", "Pak choi"],
         image: "https://via.placeholder.com/150",
         category: "Vegetarisk",
         favorite: false
@@ -151,7 +150,7 @@
         recipeItem.innerHTML = `
           <img src="${recipe.image}" alt="${recipe.name}">
           <h3>${recipe.name}</h3>
-          <p>Ingredienser: ${recipe.ingredients.map(ing => ing.name).join(', ')}</p>
+          <p>Ingredienser: ${recipe.ingredients.join(', ')}</p>
           <button onclick="addToShoppingList(${index})">Tilføj til indkøbsliste</button>
           <button onclick="toggleFavorite(${index})">${recipe.favorite ? '★' : '☆'}</button>
         `;
@@ -159,23 +158,13 @@
       });
     }
 
-    function filterRecipes() {
-      const search = document.getElementById('search').value.toLowerCase();
-      const category = document.getElementById('category-filter').value;
-      const filteredRecipes = recipes.filter(recipe =>
-        recipe.name.toLowerCase().includes(search) &&
-        (category === '' || recipe.category === category)
-      );
-      displayRecipes(filteredRecipes);
-    }
-
     function addToShoppingList(index) {
       const ingredients = recipes[index].ingredients;
       ingredients.forEach(ingredient => {
-        if (!shoppingList[ingredient.name]) {
-          shoppingList[ingredient.name] = { count: 0, image: ingredient.image };
+        if (!shoppingList[ingredient]) {
+          shoppingList[ingredient] = { count: 0, image: ingredientImages[ingredient] };
         }
-        shoppingList[ingredient.name].count++;
+        shoppingList[ingredient].count++;
       });
       updateShoppingList();
     }
@@ -188,11 +177,6 @@
         listItem.innerHTML = `<img src="${shoppingList[item].image}" alt="${item}">${item} (${shoppingList[item].count})`;
         shoppingItems.appendChild(listItem);
       }
-    }
-
-    function toggleFavorite(index) {
-      recipes[index].favorite = !recipes[index].favorite;
-      displayRecipes();
     }
 
     displayRecipes();
