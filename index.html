@@ -49,6 +49,9 @@
       margin: 5px;
       padding: 10px;
     }
+    .filters {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -56,6 +59,17 @@
     <h1>Måltidsplanlægger</h1>
   </header>
   <div class="container">
+    <h2>Filtrering og Kategorier</h2>
+    <div class="filters">
+      <input type="text" id="search" placeholder="Søg efter opskrift" onkeyup="filterRecipes()">
+      <select id="category-filter" onchange="filterRecipes()">
+        <option value="">Alle kategorier</option>
+        <option value="Kød">Kød</option>
+        <option value="Vegetarisk">Vegetarisk</option>
+        <option value="Hurtige måltider">Hurtige måltider</option>
+      </select>
+    </div>
+
     <h2>Opskrifter</h2>
     <div class="recipe-list" id="recipe-list">
       <!-- Opskrifter vil blive tilføjet her dynamisk -->
@@ -104,10 +118,10 @@
 
     const shoppingList = {};
 
-    function displayRecipes() {
+    function displayRecipes(filteredRecipes = recipes) {
       const recipeList = document.getElementById('recipe-list');
       recipeList.innerHTML = '';
-      recipes.forEach((recipe, index) => {
+      filteredRecipes.forEach((recipe, index) => {
         const recipeItem = document.createElement('div');
         recipeItem.className = 'recipe-item';
         recipeItem.innerHTML = `
@@ -119,6 +133,16 @@
         `;
         recipeList.appendChild(recipeItem);
       });
+    }
+
+    function filterRecipes() {
+      const search = document.getElementById('search').value.toLowerCase();
+      const category = document.getElementById('category-filter').value;
+      const filteredRecipes = recipes.filter(recipe =>
+        recipe.name.toLowerCase().includes(search) &&
+        (category === '' || recipe.category === category)
+      );
+      displayRecipes(filteredRecipes);
     }
 
     function addToShoppingList(index) {
