@@ -49,12 +49,6 @@
       margin: 5px;
       padding: 10px;
     }
-    .filters {
-      margin-bottom: 20px;
-    }
-    .calendar {
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
@@ -62,24 +56,6 @@
     <h1>Måltidsplanlægger</h1>
   </header>
   <div class="container">
-    <h2>Filtrering og Kategorier</h2>
-    <div class="filters">
-      <input type="text" id="search" placeholder="Søg efter opskrift" onkeyup="filterRecipes()">
-      <select id="category-filter" onchange="filterRecipes()">
-        <option value="">Alle kategorier</option>
-        <option value="Kød">Kød</option>
-        <option value="Vegetarisk">Vegetarisk</option>
-        <option value="Hurtige måltider">Hurtige måltider</option>
-      </select>
-    </div>
-
-    <h2>Kalender</h2>
-    <div class="calendar">
-      <input type="date" id="meal-date">
-      <button onclick="addToCalendar()">Tilføj til Kalender</button>
-      <ul id="calendar-list"></ul>
-    </div>
-
     <h2>Opskrifter</h2>
     <div class="recipe-list" id="recipe-list">
       <!-- Opskrifter vil blive tilføjet her dynamisk -->
@@ -127,12 +103,11 @@
     ];
 
     const shoppingList = {};
-    const calendar = [];
 
-    function displayRecipes(filteredRecipes = recipes) {
+    function displayRecipes() {
       const recipeList = document.getElementById('recipe-list');
       recipeList.innerHTML = '';
-      filteredRecipes.forEach((recipe, index) => {
+      recipes.forEach((recipe, index) => {
         const recipeItem = document.createElement('div');
         recipeItem.className = 'recipe-item';
         recipeItem.innerHTML = `
@@ -167,17 +142,6 @@
     function toggleFavorite(index) {
       recipes[index].favorite = !recipes[index].favorite;
       displayRecipes();
-    }
-
-    function addToCalendar() {
-      const date = document.getElementById('meal-date').value;
-      if (date) {
-        calendar.push(date);
-        const calendarList = document.getElementById('calendar-list');
-        const listItem = document.createElement('li');
-        listItem.textContent = date;
-        calendarList.appendChild(listItem);
-      }
     }
 
     displayRecipes();
